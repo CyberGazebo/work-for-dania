@@ -1,0 +1,52 @@
+<Page.Resources>
+        <Style TargetType="Button">
+            <Style.Triggers>
+                <Trigger Property="IsPressed" Value="True">
+                    <Trigger.EnterActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation From="1" To="0" Duration="0:0:1"
+                                                 Storyboard.TargetProperty="Opacity" />
+                                <DoubleAnimation From="0" To="1" Duration="0:0:1"
+                                                 Storyboard.TargetProperty="Opacity" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </Trigger.EnterActions>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Page.Resources>
+    <Grid>
+        <TextBlock x:Name="timerText" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Button x:Name="ButtonQ" Content="Q" Width="50" Height="50" FontSize="24" Margin="178,143,572,-175">
+                <Button.Background>
+                    <ImageBrush ImageSource="/quas.png"/>
+                </Button.Background>
+        </Button>
+        <Button x:Name="ButtonW" Content="W" Width="50" Height="50" FontSize="24" Margin="228,143,503,-175">
+                <Button.Background>
+                    <ImageBrush ImageSource="/wex.png"/>
+                </Button.Background>
+        </Button>
+        <Button x:Name="ButtonE" Content="E" Width="50" Height="50" FontSize="24" Margin="276,143,434,-175">
+            <Button.Background>
+                <ImageBrush ImageSource="/exort.png"/>
+            </Button.Background>
+        </Button>
+        <Button x:Name="Slot1" Content="D" Width="50" Height="50" FontSize="24" Margin="356,143,572,-175">
+            <Button.Background>
+                <ImageBrush/>
+            </Button.Background>
+        </Button>
+        <Button x:Name="Slot2" Content="F" Width="50" Height="50" FontSize="24" Margin="416,143,572,-175">
+            <Button.Background>
+                <ImageBrush/>
+            </Button.Background>
+        </Button>
+        <Button x:Name="ButtonR" Content="R" Width="50" Height="50" FontSize="24" Margin="486,143,572,-175">
+            <Button.Background>
+                <ImageBrush ImageSource="/invoke.png"/>
+            </Button.Background>
+        </Button>
+    </Grid>
+</Page>

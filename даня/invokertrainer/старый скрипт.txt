@@ -1,0 +1,97 @@
+ public partial class ChoiseLvlPage : Page
+    {
+        private Stopwatch stopwatch;
+        private List<string> combinations;
+        private List<String> Icons;
+        public List<string> Slots { get; set; }
+        public ChoiseLvlPage()
+        {
+            InitializeComponent();
+            stopwatch = new Stopwatch();
+            combinations = new List<string>
+            {
+                "qwe", "qqw", "qqq", "qqe", "www", "wwe", "wwq", "eee", "eew", "eeq"
+            };
+
+            Icons = new List<String>
+            {
+                "Icon1", "Icon2", "Icon3", "Icon4", "Icon5", "Icon6", "Icon7", "Icon8", "Icon9", "Icon10"
+            };
+
+            KeyDown += MainWindow_KeyDown;
+        }
+        private void MainWindow_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.R)
+            {
+                string currentCombination = GetCombination();
+                List<string> combinations = new List<string>
+                {
+                    "qwe", "qqw", "qqq", "qqe", "www", "wwe", "wwq", "eee", "eew", "eeq"
+                };
+
+                if (combinations.Contains(currentCombination))
+                {
+                    int index = combinations.IndexOf(currentCombination);
+                    if (index < Slots.Count)
+                    {
+                        string icon = Icons[index];
+                        Slots[index] = icon;
+                    }
+                }
+            }
+        }
+            private string GetCombination()
+            {
+                string combination = "";
+                if (Keyboard.IsKeyDown(Key.Q))
+                    combination += "q";
+                if (Keyboard.IsKeyDown(Key.W))
+                    combination += "w";
+                if (Keyboard.IsKeyDown(Key.E))
+                    combination += "e";
+                return combination;
+            }
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Q)
+                ButtonQ.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            else if (e.Key == Key.W)
+                ButtonW.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            else if (e.Key == Key.E)
+                ButtonE.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        }
+
+        //private void StartButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    stopwatch.Start();
+        //    CompositionTarget.Rendering += UpdateTimerText;
+        //    startButton.IsEnabled = false;
+        //    stopButton.IsEnabled = true;
+        //    resetButton.IsEnabled = false;
+        //}
+
+        //private void StopButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    stopwatch.Stop();
+        //    CompositionTarget.Rendering -= UpdateTimerText;
+        //    startButton.IsEnabled = true;
+        //    stopButton.IsEnabled = false;
+        //    resetButton.IsEnabled = true;
+        //}
+
+        //private void ResetButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    stopwatch.Reset();
+        //    timerText.Text = "00:00:00";
+        //    startButton.IsEnabled = true;
+        //    stopButton.IsEnabled = false;
+        //    resetButton.IsEnabled = false;
+        //}
+
+        private void UpdateTimerText(object sender, EventArgs e)
+        {
+            TimeSpan elapsed = stopwatch.Elapsed;
+            timerText.Text = string.Format("{0:00}:{1:00}:{2:00}", elapsed.Hours, elapsed.Minutes, elapsed.Seconds);
+        }
+    }
