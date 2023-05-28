@@ -114,5 +114,35 @@
   <ItemGroup>
     <Resource Include="invoke.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="cold_snap.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ghost_walk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ice_wall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="emp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="tornado.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="alacrity.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="sun_strike.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="forge_spirit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="chaos_meteor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="deafening_blast.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -19,41 +19,93 @@ using System.Windows.Shapes;
 
 namespace invokertrainer
 {
-    
-    public partial class ChoiseLvlPage : Page
+
+    public partial class ChoiseLvlPage : Page, INotifyPropertyChanged
     {
         private Stopwatch stopwatch;
         private List<string> combinations;
-        private List<string> Icons;
-        public List<string> Slots { get; set; }
+        private List<CombinationElement> icons;
+        private ObservableCollection<CombinationElement> slots;
+        private string currentCombination; // Изменено: использовать строку для текущей комбинации
         private int errorCount;
+        private int errors;
+        public int Errors
+        {
+            get { return errors; }
+            set
+            {
+                errors = value;
+                OnPropertyChanged(nameof(Errors));
+            }
+        }
+
+        private int score;
+        public int Score
+        {
+            get { return score; }
+            set
+            {
+                score = value;
+                OnPropertyChanged(nameof(Score));
+            }
+        }
+
+        private string _targetCombination;
+        public string TargetCombination
+        {
+            get { return _targetCombination; }
+            set
+            {
+                _targetCombination = value;
+                OnPropertyChanged(nameof(TargetCombination));
+            }
+        }
+
+        private TimeSpan elapsedTime;
+        public TimeSpan ElapsedTime
+        {
+            get { return elapsedTime; }
+            set
+            {
+                elapsedTime = value;
+                OnPropertyChanged(nameof(ElapsedTime));
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         public class CombinationElement : INotifyPropertyChanged
         {
-            private string _icon;
+            private string icon;
             public string Icon
             {
-                get { return _icon; }
+                get { return icon; }
                 set
                 {
-                    _icon = value;
+                    icon = value;
                     OnPropertyChanged(nameof(Icon));
                 }
             }
 
-            private string _iconImageSource;
+            private string iconImageSource;
             public string IconImageSource
             {
-                get { return _iconImageSource; }
+                get { return iconImageSource; }
                 set
                 {
-                    _iconImageSource = value;
+                    iconImageSource = value;
                     OnPropertyChanged(nameof(IconImageSource));
                 }
             }
 
             public event PropertyChangedEventHandler PropertyChanged;
 
-            protected virtual void OnPropertyChanged(string propertyName)
+            protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
             {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             }
@@ -62,76 +114,134 @@ namespace invokertrainer
         public ChoiseLvlPage()
         {
             InitializeComponent();
+
             stopwatch = new Stopwatch();
             combinations = new List<string>
             {
                 "qwe", "qqw", "qqq", "qqe", "www", "wwe", "wwq", "eee", "eew", "eeq"
             };
 
-            Icons = new List<string>
-            {
-                "/deafening_blast.png", "/ghost_walk.png", "/cold_snap.png", "/ice_wall.png", "/emp.png",
-                "/alacrity.png", "/tornado.png", "/sun_strike.png", "/chaos_meteor.png", "/forge_spirit.png"
-            };
-            Slots = new ObservableCollection<CombinationElement>
-    {
-        new CombinationElement { Icon = "Icon1", IconImageSource = "/icon1.png" },
-        new CombinationElement { Icon = "Icon2", IconImageSource = "/icon2.png" }
-    };
 
 
 
             DataContext = this;
-            KeyDown += MainWindow_KeyDown;
+            KeyDown += ChoiseLvlPage_KeyDown;
+            PreviewKeyDown += ChoiseLvlPage_PreviewKeyDown;
             errorCount = 0;
+            SetRandomTargetCombination();
         }
 
-        private void MainWindow_KeyDown(object sender, KeyEventArgs e)
+        private void SetRandomTargetCombination()
         {
-            if (e.Key == Key.Q || e.Key == Key.W || e.Key == Key.E)
+            Random random = new Random();
+            int index = random.Next(combinations.Count);
+            TargetCombination = combinations[index];
+        }
+
+        private void StartTimer()
+        {
+            stopwatch.Start();
+            CompositionTarget.Rendering += UpdateTimerText;
+        }
+
+        private void StopTimer()
+        {
+            stopwatch.Stop();
+            CompositionTarget.Rendering -= UpdateTimerText;
+        }
+
+        private string GetCombination()
+        {
+            
+            if (Keyboard.IsKeyDown(Key.Q))
+                currentCombination += "q";
+            if (Keyboard.IsKeyDown(Key.W))
+                currentCombination += "w";
+            if (Keyboard.IsKeyDown(Key.E))
+                currentCombination += "e";
+            return currentCombination;
+        }
+
+
+        private string _currentCombination;
+        public string CurrentCombination
+        {
+            get { return _currentCombination; }
+            set
             {
-                string currentCombination = GetCombination();
-                if (combinations.Contains(currentCombination))
+                _currentCombination = value;
+                OnPropertyChanged(nameof(CurrentCombination));
+            }
+        }
+
+        private void ChoiseLvlPage_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+
+            {
+                CurrentCombination = GetCombination(); // Обновить значение текущей комбинации
+            }
+        }
+
+        private void ChoiseLvlPage_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.R)
+            {
+                if (CurrentCombination == TargetCombination)
                 {
-                    int index = combinations.IndexOf(currentCombination);
-                    if (index < 2)
+                    Score++;
+                    if (Score >= 10)
                     {
-                        string icon = Icons[index];
-                        Slots[index] = icon;
-                        errorCount = 0; // Сбрасываем счетчик ошибок при правильной комбинации
+                        StopTimer();
+                        ShowWinMessage();
+                    }
+                    else
+                    {
+                        SetRandomTargetCombination();
+                        currentCombination = "";
                     }
                 }
                 else
                 {
                     errorCount++;
-                    if (errorCount >= 3)
+                    MessageBox.Show($"Правильный ответ: {TargetCombination}\nВаш ответ: {CurrentCombination}");
+                    if (errorCount >= 10)
                     {
-                        // Достигнуто максимальное количество ошибок, останавливаем таймер
-                        stopwatch.Stop();
-                        CompositionTarget.Rendering -= UpdateTimerText;
+                        StopTimer();
+                        ShowLossMessage();
+                    }
+                    else
+                    {
+                        Errors = errorCount;
+                        SetRandomTargetCombination();
+                        currentCombination = "";
                     }
                 }
             }
         }
 
-        private string GetCombination()
+
+        private void ShowWinMessage()
         {
-            string combination = "";
-            if (Keyboard.IsKeyDown(Key.Q))
-                combination += "q";
-            if (Keyboard.IsKeyDown(Key.W))
-                combination += "w";
-            if (Keyboard.IsKeyDown(Key.E))
-                combination += "e";
-            return combination;
+            MessageBox.Show($"Congratulations! You won!\nScore: {Score}\nElapsed Time: {ElapsedTime.ToString(@"hh\:mm\:ss")}");
         }
 
+        private void ShowLossMessage()
+        {
+            MessageBox.Show($"Game Over! You lost!\nScore: {Score}\nElapsed Time: {ElapsedTime.ToString(@"hh\:mm\:ss")}");
+        }
 
         private void UpdateTimerText(object sender, EventArgs e)
         {
-            TimeSpan elapsed = stopwatch.Elapsed;
-            timerText.Text = string.Format("{0:00}:{1:00}:{2:00}", elapsed.Hours, elapsed.Minutes, elapsed.Seconds);
+            ElapsedTime = stopwatch.Elapsed;
+        }
+
+        private void StartButton_Click(object sender, RoutedEventArgs e)
+        {
+
+            errorCount = 0;
+            Score = 0;
+            StartTimer();
+
         }
     }
 }
-

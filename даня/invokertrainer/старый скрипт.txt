@@ -1,97 +1,136 @@
- public partial class ChoiseLvlPage : Page
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+
+namespace invokertrainer
+{
+
+    public partial class ChoiseLvlPage : Page
     {
         private Stopwatch stopwatch;
         private List<string> combinations;
-        private List<String> Icons;
-        public List<string> Slots { get; set; }
+        private List<CombinationElement> Icons;
+        public ObservableCollection<CombinationElement> Slots { get; set; }
+        private int errorCount;
+
+        public class CombinationElement : INotifyPropertyChanged
+        {
+            private string _icon;
+            public string Icon
+            {
+                get { return _icon; }
+                set
+                {
+                    _icon = value;
+                    OnPropertyChanged(nameof(Icon));
+                }
+            }
+
+            private string _iconImageSource;
+            public string IconImageSource
+            {
+                get { return _iconImageSource; }
+                set
+                {
+                    _iconImageSource = value;
+                    OnPropertyChanged(nameof(IconImageSource));
+                }
+            }
+
+            public event PropertyChangedEventHandler PropertyChanged;
+
+            protected virtual void OnPropertyChanged(string propertyName)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
         public ChoiseLvlPage()
         {
             InitializeComponent();
             stopwatch = new Stopwatch();
             combinations = new List<string>
-            {
-                "qwe", "qqw", "qqq", "qqe", "www", "wwe", "wwq", "eee", "eew", "eeq"
-            };
-
-            Icons = new List<String>
-            {
-                "Icon1", "Icon2", "Icon3", "Icon4", "Icon5", "Icon6", "Icon7", "Icon8", "Icon9", "Icon10"
-            };
-
-            KeyDown += MainWindow_KeyDown;
-        }
-        private void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.R)
+            "qwe", "qqw", "qqq", "qqe", "www", "wwe", "wwq", "eee", "eew", "eeq"
+        };
+
+            Icons = new List<CombinationElement>
+        {
+            new CombinationElement { Icon = "Icon1", IconImageSource = "/icon1.png" },
+            new CombinationElement { Icon = "Icon2", IconImageSource = "/icon2.png" }
+        };
+
+            Slots = new ObservableCollection<CombinationElement>();
+
+            // Заполняем Slots начальными значениями
+            foreach (CombinationElement icon in Icons)
+            {
+                Slots.Add(icon);
+            }
+
+            DataContext = this;
+            KeyDown += ChoiseLvlPage_KeyDown;
+            errorCount = 0;
+        }
+        private string GetCombination()
+        {
+            string combination = "";
+            if (Keyboard.IsKeyDown(Key.Q))
+                combination += "q";
+            if (Keyboard.IsKeyDown(Key.W))
+                combination += "w";
+            if (Keyboard.IsKeyDown(Key.E))
+                combination += "e";
+            return combination;
+        }
+
+        private void ChoiseLvlPage_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Q || e.Key == Key.W || e.Key == Key.E)
             {
                 string currentCombination = GetCombination();
-                List<string> combinations = new List<string>
-                {
-                    "qwe", "qqw", "qqq", "qqe", "www", "wwe", "wwq", "eee", "eew", "eeq"
-                };
-
                 if (combinations.Contains(currentCombination))
                 {
                     int index = combinations.IndexOf(currentCombination);
-                    if (index < Slots.Count)
+                    if (index < 2)
                     {
-                        string icon = Icons[index];
-                        Slots[index] = icon;
+                        CombinationElement icon = Icons[index]; // Получаем элемент CombinationElement по индексу
+                        Slots[index] = icon; // Обновляем значение в Slots
+                        errorCount = 0;
+                    }
+                }
+                else
+                {
+                    errorCount++;
+                    if (errorCount >= 3)
+                    {
+                        stopwatch.Stop();
+                        CompositionTarget.Rendering -= UpdateTimerText;
                     }
                 }
             }
         }
-            private string GetCombination()
-            {
-                string combination = "";
-                if (Keyboard.IsKeyDown(Key.Q))
-                    combination += "q";
-                if (Keyboard.IsKeyDown(Key.W))
-                    combination += "w";
-                if (Keyboard.IsKeyDown(Key.E))
-                    combination += "e";
-                return combination;
-            }
-        private void Window_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Q)
-                ButtonQ.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-            else if (e.Key == Key.W)
-                ButtonW.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-            else if (e.Key == Key.E)
-                ButtonE.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-        }
-
-        //private void StartButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    stopwatch.Start();
-        //    CompositionTarget.Rendering += UpdateTimerText;
-        //    startButton.IsEnabled = false;
-        //    stopButton.IsEnabled = true;
-        //    resetButton.IsEnabled = false;
-        //}
-
-        //private void StopButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    stopwatch.Stop();
-        //    CompositionTarget.Rendering -= UpdateTimerText;
-        //    startButton.IsEnabled = true;
-        //    stopButton.IsEnabled = false;
-        //    resetButton.IsEnabled = true;
-        //}
-
-        //private void ResetButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    stopwatch.Reset();
-        //    timerText.Text = "00:00:00";
-        //    startButton.IsEnabled = true;
-        //    stopButton.IsEnabled = false;
-        //    resetButton.IsEnabled = false;
-        //}
-
+        
         private void UpdateTimerText(object sender, EventArgs e)
         {
             TimeSpan elapsed = stopwatch.Elapsed;
             timerText.Text = string.Format("{0:00}:{1:00}:{2:00}", elapsed.Hours, elapsed.Minutes, elapsed.Seconds);
         }
     }
+}
+

@@ -27,8 +27,11 @@
         </Style>
     </Page.Resources>
     <Grid>
-        <TextBlock x:Name="timerText" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Label x:Name="targetCombinationLabel" Content="{Binding TargetCombination}" FontSize="24" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="390,111,0,0"/>
+        <TextBlock x:Name="timerText" FontSize="24" Width="60" Margin="370,26,370,378"/>
+        <Label Content="{Binding CurrentCombination}" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="20" Margin="0,185,0,0" />
+
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
             <Button x:Name="ButtonQ" Content="Q" Width="50" Height="50" FontSize="24">
                 <Button.Background>
                     <ImageBrush ImageSource="/quas.png"/>
@@ -44,7 +47,7 @@
                     <ImageBrush ImageSource="/exort.png"/>
                 </Button.Background>
             </Button>
-            <Button x:Name="Slot1" Width="50" Height="50" FontSize="24">
+            <!--<Button x:Name="Slot1" Width="50" Height="50" FontSize="24">
                 <Button.Background>
                     <ImageBrush ImageSource="{Binding Slots[0].IconImageSource}"/>
                 </Button.Background>
@@ -59,14 +62,67 @@
                 <Button.Content>
                     <TextBlock Text="{Binding Slots[1].Icon}" />
                 </Button.Content>
-            </Button>
-
-
+            </Button>-->
             <Button x:Name="ButtonR" Content="R" Width="50" Height="50" FontSize="24"  Command="{Binding AddIconCommand}">
                 <Button.Background>
                     <ImageBrush ImageSource="/invoke.png"/>
                 </Button.Background>
             </Button>
         </StackPanel>
+        <StackPanel HorizontalAlignment="Right">
+            <Label x:Name="cold_snap" Content="qqq" FontSize="24" Height="50" Width="50">
+                <Label.Background>
+                    <ImageBrush ImageSource="/cold_snap.png"/>
+                </Label.Background>
+            </Label>
+            <Label x:Name="chost_walk" Content="qqw" FontSize="24" Height="50" Width="50">
+                <Label.Background>
+                    <ImageBrush ImageSource="/ghost_walk.png"/>
+                </Label.Background>
+            </Label>
+            <Label x:Name="ice_wall" Content="qqe" FontSize="24" Height="50" Width="50">
+                <Label.Background>
+                    <ImageBrush ImageSource="/ice_wall.png"/>
+                </Label.Background>
+            </Label>
+            <Label x:Name="EMP" Content="www" FontSize="24" Height="50" Width="50">
+                <Label.Background>
+                    <ImageBrush ImageSource="/emp.png"/>
+                </Label.Background>
+            </Label>
+            <Label x:Name="tornado" Content="wwq" FontSize="24" Height="50" Width="50">
+                <Label.Background>
+                    <ImageBrush ImageSource="/tornado.png"/>
+                </Label.Background>
+            </Label>
+            <Label x:Name="alacrity" Content="wwe" FontSize="24" Height="50" Width="50">
+                <Label.Background>
+                    <ImageBrush ImageSource="/alacrity.png"/>
+                </Label.Background>
+            </Label>
+            <Label x:Name="sun_strike" Content="eee" FontSize="24" Height="50" Width="50">
+                <Label.Background>
+                    <ImageBrush ImageSource="/sun_strike.png"/>
+                </Label.Background>
+            </Label>
+            <Label x:Name="forge_spirit" Content="eeq" FontSize="24" Height="50" Width="50">
+                <Label.Background>
+                    <ImageBrush ImageSource="/forge_spirit.png"/>
+                </Label.Background>
+            </Label>
+            <Label x:Name="chaos_meteor" Content="eew" FontSize="24" Height="50" Width="50">
+                <Label.Background>
+                    <ImageBrush ImageSource="/chaos_meteor.png"/>
+                </Label.Background>
+            </Label>
+            <Label x:Name="deafining_blast" Content="qwe" FontSize="24">
+                <Label.Background>
+                    <ImageBrush ImageSource="/deafening_blast.png"/>
+                </Label.Background>
+            </Label>
+        </StackPanel>
+        <Button x:Name="startButton" Content="Start" Width="100" Height="50" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="20" Click="StartButton_Click"/>
+        <TextBlock x:Name="scoreText" Text="{Binding Score}" FontSize="24" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="46,0,0,120" Width="48" Height="50"/>
+        <TextBlock x:Name="errorCountText" Text="{Binding Errors}" FontSize="24" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="46,0,0,75" Width="180"/>
     </Grid>
 </Page>
